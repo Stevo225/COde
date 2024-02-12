@@ -1,0 +1,33 @@
+using System;
+using System.Net.Mail;
+
+namespace SimpleEmailApp
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                string inserttext = "TeXTTTT";
+                MailMessage mail = new MailMessage();
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com");
+
+                mail.From = new MailAddress("ste.gajdos@gmail.com");
+                mail.To.Add("ste.gajdos@gmail.com");
+                mail.Subject = "Test message";
+                mail.Body = inserttext;
+
+                smtp.Port = 587;
+                smtp.Credentials = new System.Net.NetworkCredential("ste.gajdos@gmail.com", "gdby zbkr cvpf pwwt");
+                smtp.EnableSsl = true;
+
+                smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+    }
+}

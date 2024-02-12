@@ -1,0 +1,16 @@
+import subprocess
+import os
+
+
+bat_file_path = r'CUsersLenovoDesktopPython_Tabe.bat'
+process = subprocess.Popen([bat_file_path], shell=True)
+
+process.communicate()  
+
+with open(r'CUsersLenovoDesktopPomocny.txt', 'r') as file
+    output_python = file.read()
+
+new_txt_path = r'CUsersLenovoDesktopVysledny.txt'
+
+with open(new_txt_path, 'w') as file
+    file.write(output_python)
