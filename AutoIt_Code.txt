@@ -1,0 +1,3 @@
+WinWaitActive("Otvorenie", "", 10)
+ControlSetText("Otvorenie", "", "[CLASS:Edit; INSTANCE:1]", "C:\Users\Lenovo\Desktop\listky_do_divadla.PDF")
+ControlClick("Otvorenie", "", "[CLASS:Button; INSTANCE:1]")

@@ -1,0 +1,41 @@
+*** Settings ***
+Library    SeleniumLibrary
+Library    Process
+Library    OperatingSystem
+Library    String
+Library    JSONLibrary
+*** Variables ***
+${BROWSER}              chrome
+${URL}                  https://smallpdf.com/pdf-to-excel
+${autoit_script}        C:\\Users\\Lenovo\\Documents\\First_click.au3
+${run}                  C:\\Program Files (x86)\\AutoIt3\\AutoIt3.exe
+${Original_String}      C:\\Users\\Lenovo\\PycharmProjects\\pythonProject2\\venv\\Lib\\site-packages\\RobotFramework\\Extensions\\AutoItLibrary\\LICENSE.txt
+*** Test Cases ***
+Open Browser and Upload File
+    Open Browser    ${URL}    ${BROWSER}
+    Maximize Browser Window
+    sleep     2s
+    click element                //*[@id="app"]/div/div[1]/header/div[2]/div/div/label/div[1]/div[2]/form/label/div/div[2]/button[1]
+    sleep     4s
+    ${Json_File}    load json from file    C:\\Users\\Lenovo\\Desktop\\PROBLEMY.json
+    ${File}     get value from json        ${Json_File}    $.ProfileNumber
+    ${File2}    convert json to string    ${File}
+    ${File3}    replace string  ${File2}    [     ${EMPTY}
+    ${File4}    replace string  ${File3}       ]  ${EMPTY}
+    ${matches}    set variable    ${File4[:2]}
+    ${two_numbers}   set variable    ${matches}.dx
+    log to console     ${two_numbers}
+
+    sleep     1s
+    ${Path}    replace string     ${Original_String}     LICENSE                ${File4}
+    ${Path1}   replace string     ${Path}                AutoItLibrary          ${two_numbers}
+    log to console     ${Path}
+    ${Rewrite}=   set variable   WinWaitActive("Otvorenie", "", 10)\nControlSetText("Otvorenie", "", "[CLASS:Edit; INSTANCE:1]", "\\${Path1}")\n\ControlClick("Otvorenie", "", "[CLASS:Button; INSTANCE:1]")
+    remove file                  C:\\Users\\Lenovo\\Documents\\First_click.au3
+    sleep     2s
+    append to file               C:\\Users\\Lenovo\\Documents\\First_click.au3    ${Rewrite}
+    sleep     2s
+    ${process}=    Start Process    ${run}     ${autoit_script}
+    sleep     3s
+    Wait For Process    ${process}    timeout=5s
+    sleep     10s

@@ -1,0 +1,57 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from time import sleep
+import pyautogui
+import json
+import xlsxwriter
+import sys
+
+
+driver = webdriver.Edge()
+driver.get('https://deep.connect.hydro.com/')
+driver.maximize_window()
+main_page = driver.current_window_handle
+sleep(3)
+Json_File= ('C:\\Users\\a230148\\Desktop\\Test_json.json')
+with open(Json_File, 'r') as soubor:
+    json_data = json.load(soubor)
+    profile_number = json_data['ProfileNumber']
+
+
+    two_numbers = str(profile_number)[:2]
+sleep(1)
+Original_String= (r'J:\Romidot\Romidot\DXF\ASCONA DXF\DXF-31\310014.dxf')
+Path = Original_String.replace('310014', str(profile_number))
+Path1 = Path.replace('DXF-31',f'DXF-{two_numbers}')
+driver.find_element(By.XPATH,  '//*[@id="root"]/div[1]/div[1]/div/div/div/section[1]/div[1]/div[2]/div/div[1]/div/div[2]/div/div/div/div[1]').click()
+sleep(1)
+driver.find_element(By.XPATH, '//*[@id="bui8__anchor"]/div/div').click()
+sleep(1)
+driver.find_element(By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[1]/div[1]/div[2]/div/div[1]/div/div[5]/div/section/button').click()
+sleep(2)
+pyautogui.write(Path1)
+pyautogui.hotkey('enter')
+sleep(15)
+
+#GET_FROM_TABLE
+Table = (By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[2]/div[1]/div[1]/div/div[11]/div/div/table')
+Perimeter = driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[2]/div[1]/div[1]/div/div[11]/div/div/table/tbody/tr/td[6]')
+Profile_weight = driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[2]/div[1]/div[1]/div/div[11]/div/div/table/tbody/tr/td[1]')
+Profile_area = driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[2]/div[1]/div[1]/div/div[11]/div/div/table/tbody/tr/td[2]')
+CCD = driver.find_elements(By.XPATH, '//*[@id="root"]/div[1]/div[1]/div/div/div/section[2]/div[1]/div[1]/div/div[11]/div/div/table/tbody/tr/td[3]')
+
+print(Perimeter[0].text)
+
+with open("C:\\Users\\a230148\\Desktop\\Test_json.json", "r") as jsonFile:
+    data = json.load(jsonFile)
+
+data["Deep"]["DeepFirstColumnName"] = Perimeter[0].text #columns a tu chces zapisovat hodnotu takze by som tam toto zapisal
+data["Deep"]["DeepSecondColumnName"] = Profile_weight[0].text
+data["Deep"]["DeepthirdColumnName"] = Profile_area[0].text
+data["Deep"]["DeepFourthColumnName"] = Profile_weight[0].text
+data["Deep"]["DeepFivethColumnName"] = CCD[0].text
+
+
+
+with open("C:\\Users\\a230148\\Desktop\\Test_json.json", "w") as jsonFile:   #tu musis zadat cestu svojho json-a
+    json.dump(data, jsonFile)

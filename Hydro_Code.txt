@@ -1,0 +1,95 @@
+*** Settings ***
+Library    SeleniumLibrary
+Library  OperatingSystem
+Library     Collections
+Library    JSONLibrary
+
+
+*** Variables ***
+${BROWSER}    chrome
+${URL}        https://sknavpv-app001.nhy.hydro.com:9445/WATDev/faces/login.jsp;jsessionid=7DFEDFF3EA5196B97E51E3F27317BB81
+${PrimaryPress}    P15
+
+
+*** Test Cases ***
+Open Google Homepage
+    ${json_file}     load json from file     C:\\Users\\a230148\\Desktop\\Test_JSONt.json
+    ${json_value1}     get value from json     ${json_file}     $.PrimaryPress
+    ${json_value_Profile}     get value from json     ${json_file}     $.ProfileNumber
+    log to console    ${json_value1}
+    log to console    ${json_value_Profile}
+
+
+
+
+
+    Open Browser    ${URL}    ${BROWSER}
+    maximize browser window
+    Input Text    //*[@id="loginEntry"]   A230148
+    input text    //*[@id="passwordEntry"]    MarinaBeach2023
+    click element    //*[@id="form1:j_id_jsp_381154973_62"]
+    sleep    2s
+    select frame    //frame[@id='Menuframe']
+    click element    //input[@id='expandallbutton']
+
+    sleep    1s
+    IF     ${json_value1} == ['P15']
+      click element    //*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:0:0:0:0:0"]/table[2]/tbody/tr/td[4]/a/span
+    ELSE
+      click element    //*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:0:0:0:0:0"]/table[3]/tbody/tr/td[4]/a/span
+    END
+
+    # Get window handles
+    ${window_handles}=    Get Window Handles
+
+    # Switch to the new window
+    Switch Window    ${window_handles}[1]
+    sleep    4s
+    select frame    //frame[@id='Menuframe']
+    click element    //input[@id='expandallbutton']
+    sleep    1s
+
+    click element    //*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:3:0:3"]/table[1]/tbody/tr/td[3]/a
+    sleep    3
+
+
+       unselect frame
+       select frame    //frame[@id='Mainframe']
+       click element    //img[@id='eraseButton']
+
+       ${json_value_Profile_Variable}     set variable    ${json_value_Profile}[0]
+       input text    //*[@id="dieNumberSearch"]    ${json_value_Profile_Variable}
+
+       sleep    1s
+       click element    //*[@id="searchButton"]
+Get table data
+    ${table_data}=    get text    //*[@id="myform:datamytable"]
+    log to console   ${table_data}
+    append to file    C:\\Users\\a230148\\Desktop\\Get_table.txt    ${table_data}
+
+    ${rows} =    get element count    //*[@id="myform:datamytable"]/tbody/tr
+    ${columns} =    get element count    //*[@id="myform:datamytable"]/tbody/tr[1]/td
+
+    log to console    ${rows}
+    log to console    ${columns}
+    ${datatest}     get text    //*[@id="myform:datamytable"]/tbody/tr[2]/td[3]/div/span
+    log to console    ${datatest}
+    log to console    ${columns}
+
+    ${table_dictionary}=    Create Dictionary
+
+    FOR     ${indexrow}    IN RANGE      ${rows}
+         ${rowlist}  Create List
+         FOR     ${indexcolumn}    IN RANGE      ${columns}
+             log to console    ${indexcolumn}
+             IF   (${indexcolumn} > 1) and (${indexrow} > 0) and (${indexcolumn} != 40) and (${indexcolumn} != 43)
+                  ${datatest}     get text    //*[@id="myform:datamytable"]/tbody/tr[${indexrow}]/td[${indexcolumn}]/div/span
+                  log to console    ${datatest}
+                  Append To List    ${rowlist}  ${datatest}
+             END
+         END
+         set to dictionary    ${table_dictionary}   ${indexrow}     ${rowlist}
+    END
+    Log Dictionary     ${table_dictionary}
+    ${row_string}=    Convert To String    ${table_dictionary}
+     append to file     C:\\Users\\a230148\\Desktop\\Get_Table_test.txt     ${row_string}

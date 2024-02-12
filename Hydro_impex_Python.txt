@@ -1,0 +1,96 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from time import sleep
+import pyautogui
+import json
+
+#Variable
+PrimaryPress = 'P15'
+Url = 'https://sknavpv-app001.nhy.hydro.com:9445/WATDev/faces/login.jsp;jsessionid=7DFEDFF3EA5196B97E51E3F27317BB81'
+
+#JsonLoad
+with open('C:\\Users\\a230148\\Desktop\\Test_JSONt.json') as json_file:
+    data = json.load(json_file)
+json_value1 = data['PrimaryPress']
+json_value_Profile = data['ProfileNumber']
+print(json_value1)
+print(json_value_Profile)
+
+#OpenBrowser
+driver = webdriver.Edge()
+driver.get('http://sknavics-app01.global.to/WATDev/faces/login.jsp')
+driver.maximize_window()
+main_page = driver.current_window_handle
+sleep(3)
+Username = driver.find_element(By.ID, 'loginEntry')
+Username.send_keys('A230148')
+sleep(1)
+Password = driver.find_element(By.ID, 'passwordEntry')
+Password.send_keys('MarinaBeach2023')
+Password.send_keys(Keys.ENTER)
+sleep(2)
+
+frame_xpath = "//frame[@id='Menuframe']"
+frame = driver.find_element(By.XPATH, frame_xpath)
+driver.switch_to.frame(frame)
+Click_Frame = driver.find_element(By.ID, 'expandallbutton').click()
+sleep(1)
+
+if json_value1 == 'P15':
+    element_xpath = driver.find_element(By.XPATH, '//*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:0:0:0:0:0"]/table[2]/tbody/tr/td[4]/a/span').click()
+else:
+    element_xpath1 = driver.find_element(By.XPATH, '//*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:0:0:0:0:0"]/table[3]/tbody/tr/td[4]/a/span').click()
+sleep(2)
+#SwitchWindow
+window_handles = driver.window_handles
+
+driver.switch_to.window(window_handles[1])
+sleep(4)
+
+#ClikingNextWindow
+frame_xpath = "//frame[@id='Menuframe']"
+frame = driver.find_element(By.XPATH, frame_xpath)
+driver.switch_to.frame(frame)
+Click_Frame = driver.find_element(By.ID, 'expandallbutton').click()
+sleep(3)
+
+Element2 = driver.find_element(By.XPATH, '//*[@id="org.apache.myfaces.tree.TOGGLE_SPAN:foo:clientTree:0:3:0:3"]/table[1]/tbody/tr/td[3]/a').click()
+sleep(3)
+#ClickingOnErase
+driver.switch_to.default_content()
+frame_xpath = "//frame[@id='Mainframe']"
+frame = driver.find_element(By.XPATH, frame_xpath)
+driver.switch_to.frame(frame)
+EraseButton = driver.find_element(By.XPATH, '//*[@id="dieNumberSearch"]').click()
+
+Text = driver.find_element(By.XPATH, '//*[@id="searchButton"]')
+Text.send_keys('json_value_Profile')
+sleep(1)
+Search = driver.find_element(By.XPATH, '//*[@id="searchButton"]').click()
+
+#GetTableData
+
+table_data = driver.find_element(By.XPATH, '//*[@id="myform:datamytable"]').text
+print(table_data)
+with open('C:\\Users\\a230148\\Desktop\\Get_table.txt', 'a') as file:
+    file.write(table_data)
+rows = len(driver.find_elements(By.XPATH, '//*[@id="myform:datamytable"]/tbody/tr'))
+columns = len(driver.find_elements(By.XPATH, '//*[@id="myform:datamytable"]/tbody/tr[1]/td'))
+
+print(rows)
+print(columns)
+
+table_dictionary = {}
+for indexrow in range(rows):
+    rowlist = []    
+    for indexcolumn in range(columns):
+        if indexcolumn > 1 and indexrow > 0 and indexcolumn != 40 and indexcolumn != 43:
+            datatest = f'//*[@id="myform:datamytable"]/tbody/tr[{indexrow}]/td[{indexcolumn}]/div/span').text
+            print(datatest)
+            rowlist.append(datatest)
+    table_dictionary[indexrow] = rowlist
+print(table_dictionary)
+row_string = str(table_dictionary)
+with open('C:\\Users\\a230148\\Desktop\\Get_Table_test.txt', 'a') as file:
+    file.write(row_string)
