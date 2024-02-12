@@ -1,0 +1,34 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def send_email():
+    try:
+        insert_text = "TeXTTTT"
+
+        sender_email = "ste.gajdos@gmail.com"
+        receiver_email = "ste.gajdos@gmail.com"
+        subject = "Test message"
+
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = receiver_email
+        message["Subject"] = subject
+
+        message.attach(MIMEText(insert_text, "plain"))
+
+        smtp = smtplib.SMTP("smtp.gmail.com", 587)
+        smtp.starttls()
+
+        smtp.login(sender_email, "gdby zbkr cvpf pwwt")
+
+        smtp.sendmail(sender_email, receiver_email, message.as_string())
+
+        smtp.quit()
+
+        print("E-mail byl úspěšně odeslán.")
+    except Exception as ex:
+        print(f"Chyba: {ex}")
+
+if __name__ == "__main__":#ak je hlavny program nechaj tu ak je pustany cez nieco ine daj prec
+    send_email()
