@@ -1,0 +1,110 @@
+import win32com.client
+import subprocess
+import time
+
+# Run SAP Logon
+subprocess.run(r'C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe')
+
+time.sleep(5)
+print("aaaaaaaaaaaaaaaaaaa")
+sapGui = win32com.client.GetObject("SAPGUI")
+application = sapGui.GetScriptingEngine
+
+#Pripojenie na SAp
+connection = application.OpenConnection("SAPEX Production", True)
+time.sleep(7)
+connection = application.Children(0)
+session = connection.Children(0)
+# Zvacsenie okna
+session.findById("wnd[0]").maximize()
+# Vyklikavania
+#search first window
+session.findById("wnd[0]/tbar[0]/okcd").text = "VA01"
+session.findById("wnd[0]").sendVKey(0)
+session.findById("wnd[0]/usr/ctxtVBAK-AUART").text = "Zeta"
+session.findById("wnd[0]").sendVKey(0)
+#define second window
+session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUAGV-KUNNR").text = "10021762"
+time.sleep(1)
+session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/subPART-SUB:SAPMV45A:4701/ctxtKUWEV-KUNNR").text = "10021762"
+time.sleep(1)
+session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/txtVBKD-BSTKD").text = "Al odpad"
+time.sleep(1)
+#define table
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/ctxtRV45A-MABNR[2,0]").text = "1152"
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/txtRV45A-KWMENG[3,0]").text = "1"
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG").columns.elementAt(6).width = 8
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/txtVBAP-ARKTX[17,0]").text = "Odpadový ropný olej"
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/txtVBAP-ARKTX[17,0]").setFocus
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/txtVBAP-ARKTX[17,0]").caretPosition = 21
+session.findById("wnd[0]").sendVKey(0)
+
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG/txtRV45A-KWMENG[3,0]").setFocus
+session.findById("wnd[0]").sendVKey(0)
+
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/tblSAPMV45ATCTRL_U_ERF_KONFIG").getAbsoluteRow(0).selected = 1
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_OVERVIEW/tabpT\\01/ssubSUBSCREEN_BODY:SAPMV45A:4434/subSUBSCREEN_TC:SAPMV45A:4923/subSUBSCREEN_BUTTONS:SAPMV45A:4050/btnBT_PKON").press()
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\\05/ssubSUBSCREEN_BODY:SAPLV69A:6201/subSUBSCREEN_PUSHBUTTONS:SAPLV69A:1000/btnBT_KOAN").press()
+
+
+
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\\05/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/ctxtKOMV-KSCHL[0,1]").text = "ZESP"
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\\05/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[2,1]").text = "135,00"
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\\05/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[2,1]").setFocus
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_ITEM/tabpT\\05/ssubSUBSCREEN_BODY:SAPLV69A:6201/tblSAPLV69ATCTRL_KONDITIONEN/txtKOMV-KBETR[2,1]").caretPosition = 16
+session.findById("wnd[0]").sendVKey(0)
+#wriete text into main
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+session.findById("wnd[0]/usr/subSUBSCREEN_HEADER:SAPMV45A:4021/btnBT_HEAD").press()
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\10").select()
+session.findById("wnd[0]/usr/tabsTAXI_TABSTRIP_HEAD/tabpT\\10/ssubSUBSCREEN_BODY:SAPMV45A:4152/subSUBSCREEN_TEXT:SAPLV70T:2100/cntlSPLITTER_CONTAINER/shellcont/shellcont/shell/shellcont[1]/shell").text = "test"
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+
+time.sleep(7)
+#TU MUSI BYT CLICK NA ULOZIT
+
+#Spracovanie zasoby faktur
+session.findById("wnd[0]/tbar[0]/okcd").text = "vf04"
+session.findById("wnd[0]").sendVKey(0)
+session.findById("wnd[0]/tbar[1]/btn[8]").press()
+session.findById("wnd[1]/tbar[0]/btn[0]").press()
+#Jednotilive fatkruy
+#Tu bude treba vymysliet jak to oznaci riadok a ptoom sa klikne(Zatial klika na jeden)
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").currentCellColumn = ""
+time.sleep(1)
+session.findById("wnd[0]/usr/cntlGRID1/shellcont/shell").selectedRows = "1"
+time.sleep(1)
+session.findById("wnd[0]/tbar[1]/btn[18]").press()
+time.sleep(4)
+#Tu bude if ci ze ak sa to rovna 0 posiela mail
+ZeroNumber = session.findById("wnd[0]/usr/txtVBRK-NETWR")
+textValue = ZeroNumber.text
+
+if textValue == '0':
+
+else: #posle sa mail ale nechcem tu davat cely kod a neviem zatial ako ho prenasat
+    
+session.findById("wnd[0]/usr/txtVBRK-NETWR").setFocus
+time.sleep(1)
+session.findById("wnd[0]/usr/txtVBRK-NETWR").caretPosition = 14
+#Tu dakde sa musi ulozit
+#tu sa vracim na hlavne menu
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+session.findById("wnd[1]/usr/btnSPOP-OPTION2").press()
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+session.findById("wnd[0]/tbar[0]/btn[3]").press()
+time.sleep(1)
+
+session.findById("wnd[0]/tbar[0]/okcd").text = "vf03"
+session.findById("wnd[0]").sendVKey(0)
+
+session.findById("wnd[0]/usr/ctxtVBRK-VBELN").text = "1159040934"
+session.findById("wnd[0]/mbar/menu[0]/menu[11]").select()
+session.findById("wnd[1]/tbar[0]/btn[37]").press()
+session.findById("wnd[0]/tbar[0]/okcd").text = "pdf!"
+session.findById("wnd[0]").sendVKey(0)
+#tu treba dotukat ulozenie
+
+
+
