@@ -2,33 +2,32 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def send_email():
-    try:
-        insert_text = "TeXTTTT"
+# Nastavenie e-mailových údajov
+email_address = 'ste.gajdos@gmail.com'
+password = 'gdby zbkr cvpf pwwt'
+recipient = 'ste.gajdos@gmail.com'
+subject = 'Testovaci mail'
+body = 'Obsah spravy.'
 
-        sender_email = "ste.gajdos@gmail.com"
-        receiver_email = "ste.gajdos@gmail.com"
-        subject = "Test message"
+# Nastavenie spojenia s SMTP serverom (pre Gmail)
+smtp_server = 'smtp.gmail.com'
+smtp_port = 587
 
-        message = MIMEMultipart()
-        message["From"] = sender_email
-        message["To"] = receiver_email
-        message["Subject"] = subject
+# Vytvorenie správy
+message = MIMEMultipart()
+message['From'] = email_address
+message['To'] = recipient
+message['Subject'] = subject
+message.attach(MIMEText(body, 'plain'))
 
-        message.attach(MIMEText(insert_text, "plain"))
+# Pripojenie k SMTP serveru a odoslanie správy
+try:
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()  # Pre TLS šifrovanie
+        server.login(email_address, password)
+        server.sendmail(email_address, recipient, message.as_string())
+    print('E-mail odoslaný úspešne.')
+except Exception as e:
+    print(f'Chyba pri odosielaní e-mailu: {e}')
 
-        smtp = smtplib.SMTP("smtp.gmail.com", 587)
-        smtp.starttls()
 
-        smtp.login(sender_email, "gdby zbkr cvpf pwwt")
-
-        smtp.sendmail(sender_email, receiver_email, message.as_string())
-
-        smtp.quit()
-
-        print("E-mail byl úspěšně odeslán.")
-    except Exception as ex:
-        print(f"Chyba: {ex}")
-
-if __name__ == "__main__":#ak je hlavny program nechaj tu ak je pustany cez nieco ine daj prec
-    send_email()
