@@ -1,0 +1,10 @@
+import pdfplumber
+
+pdf_subor = 'C:\\Users\\Lenovo\\Downloads\\JLR Invoice ABXFSB02400003PS.pdf'
+
+with pdfplumber.open(pdf_subor) as pdf:
+    with open('C:\\Users\\Lenovo\\Desktop\\David.txt', 'w', encoding='utf-8') as subor:
+        for strana in pdf.pages:
+            text = strana.extract_text()
+            print(text)
+            subor.write(text + '\n\n')
