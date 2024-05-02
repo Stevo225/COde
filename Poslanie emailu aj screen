@@ -1,0 +1,71 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase  # Pridaný import
+from email import encoders  # Pridaný import
+from PIL import ImageGrab
+import time
+
+
+
+
+
+import urpa
+from pywinauto.application import Application
+time.sleep(2)
+cf = urpa.condition_factory()
+app = Application().start(r"C:\Program Files\Notepad++\notepad++.exe")
+app = urpa.find_first_app('1 - Notepad++', timeout=1000)
+app.find_first(cf.text('Nastavenia')).send_mouse_click(1)
+
+
+
+
+
+def Mail(recipient, body):
+    # Vytvorenie screenshotu
+    timedate = time.strftime("%Y-%m-%d_%H-%M-%S")
+    screenshot = ImageGrab.grab()
+    screenshot_path = f'C:\\Users\\Lenovo\\Desktop\\Solax_Python\\Screen\\screenshot_{timedate}.png'
+    screenshot.save(screenshot_path)
+    print(f"Printscreen bol úspešne vykonaný a uložený do súboru 'screenshot_{timedate}.png'.")
+
+    # Nastavenie e-mailových údajov
+    email_address = 'ste.gajdos@gmail.com'
+    password = 'gdby zbkr cvpf pwwt'
+    subject = 'Testovaci mail'
+
+    # Nastavenie spojenia s SMTP serverom (pre Gmail)
+    smtp_server = 'smtp.gmail.com'
+    smtp_port = 587
+
+    # Vytvorenie správy
+    message = MIMEMultipart()
+    message['From'] = email_address
+    message['To'] = recipient
+    message['Subject'] = subject
+    message.attach(MIMEText(body, 'plain'))
+
+    # Pridanie prílohy (screenshotu) do e-mailu
+    with open(screenshot_path, 'rb') as attachment:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition', f'attachment; filename= screenshot_{timedate}.png')
+    message.attach(part)
+
+    # Pripojenie k SMTP serveru a odoslanie správy
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()  # Pre TLS šifrovanie
+            server.login(email_address, password)
+            server.sendmail(email_address, recipient, message.as_string())
+        print('E-mail odoslaný úspešne.')
+    except Exception as e:
+        print(f'Chyba pri odosielaní e-mailu: {e}')
+
+# Použitie funkcie Mail
+#Mail('ste.gajdos@gmail.com', 'Telo správy')
+
+
+
