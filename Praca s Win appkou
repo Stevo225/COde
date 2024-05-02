@@ -1,0 +1,31 @@
+import pyautogui
+from pywinauto import Application
+import time
+
+# Cesta k aplikácii
+app_path = r"\\solax-server\MrpWin\Mzdy a personalistika (SK)\mapw4biz.exe"
+
+# Spustenie aplikácie
+app = Application(backend="uia").start(app_path)
+
+# Pauza na načítanie aplikácie
+time.sleep(10)
+
+# Získanie hlavného okna s názvom "Zoznam firiem"
+hlavne_okno = app.window(title="Zoznam firiem")
+
+# Kliknutie na tlačidlo pomocou AutomationId
+tlacidlo = hlavne_okno.child_window(control_type="Pane", found_index=0).child_window(control_type="ComboBox", found_index=1).child_window(control_type="Button")
+tlacidlo.click()
+pyautogui.press('up')
+pyautogui.press('enter')
+
+# Získanie tabuľky
+tabulka = hlavne_okno.child_window(control_type="Table")
+
+# Kliknutie na tabuľku
+tabulka.click_input()
+
+# Simulácia stlačenia klávesu 'pageup' viackrát
+for _ in range(10):  # Zopakujte stlačenie klávesu 'pageup' desaťkrát
+    pyautogui.press('pageup')
