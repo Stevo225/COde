@@ -7,21 +7,6 @@ from PIL import ImageGrab
 import time
 
 
-
-
-
-import urpa
-from pywinauto.application import Application
-time.sleep(2)
-cf = urpa.condition_factory()
-app = Application().start(r"C:\Program Files\Notepad++\notepad++.exe")
-app = urpa.find_first_app('1 - Notepad++', timeout=1000)
-app.find_first(cf.text('Nastavenia')).send_mouse_click(1)
-
-
-
-
-
 def Mail(recipient, body):
     # Vytvorenie screenshotu
     timedate = time.strftime("%Y-%m-%d_%H-%M-%S")
