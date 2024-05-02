@@ -1,0 +1,81 @@
+import json
+from VSZP import VseobecnaZdrav
+def JsonRead(Company,Type):
+    # Load JSON data
+    with open(r'C:\Users\Lenovo\Desktop\Solax_Python\test.txt', encoding='utf-8') as json_file:
+        data = json.load(json_file)
+    if Type == "UnionUlozenie":
+        Type = "Union"
+    if Type == "DoveraUlozenie":
+        Type = "Dovera"
+    if Type == "DanovyUlozenie":
+        Type = "Danovy"
+    if Type == "SocialnaUlozenie":
+        Type = "SP"
+    if Type == "VSZPUlozenie":
+        Type = "VSZP"
+    Type1 = Type
+    TypeSmall = Type.lower()
+    target_company_name = Company
+    danovy_data = {}  # Initialize an empty dictionary to store Danovy data
+
+    print(Company)
+    print(Type1)
+
+
+    for worker in data['WorkerData']:
+        for company in worker['Companies']:
+            if company['CompanyName'] == target_company_name:
+                danovy_data = company.get(f'{TypeSmall}Data', {})
+                dph_data = company.get('dphdata', {})
+                if f'{Type1}Login' in danovy_data and f'{Type1}pass' in danovy_data:
+                    print()
+                else:
+                    print("Danovy Login neexistuje")
+
+                if "SPLogin" in danovy_data and "SPLoginQRCode" in danovy_data and "SPpassQRCode" in danovy_data and "SPICZ" in danovy_data:
+                    print()
+                else:
+                    print("SpQRCode neexistuje")
+
+                if "SPQRCode" in danovy_data:
+                    print()
+                else:
+                    print("SPQRCode neexistuje")
+
+                if  "UnionPIN" in danovy_data:
+                    print()
+                else:
+                    print("UnionPin neexistuje")
+
+                if "companyNameFromFinancnaSprava" in dph_data and "MaObcianskyPreukaz" in dph_data:
+                    print()
+                else:
+                    print("CompanyNameFinancnaSprava neexistuje")
+
+                if "VSZPVAR" in danovy_data:
+                    print()
+                else:
+                    print("VSZPVAR neexistuje")
+
+                grid_card_data = company.get('vszpData', {}).get('VSZPGridCard', [])
+                processed_grid_card_data = []  # Initialize a list to store processed grid card data
+                if grid_card_data:
+                    # Iterate through each row in the grid card data
+                    for row_index, row in enumerate(grid_card_data, start=1):
+                        row_data = {"row": row_index, "cells": []}  # Initialize a dictionary for the current row
+                        # Iterate through each cell in the row
+                        for column_index, cell_value in enumerate(row, start=1):
+                            # Add the cell value to the row data, handling None values
+                            cell_info = {"column": column_index, "value": cell_value if cell_value is not None else "Cell is empty"}
+                            row_data["cells"].append(cell_info)
+                        processed_grid_card_data.append(row_data)  # Add the row data to the processed grid card data
+                else:
+                    print("Grid card data not found")
+
+                break
+
+
+    return danovy_data.get(f'{Type1}Login', None), danovy_data.get(f'{Type1}pass', None, ),danovy_data.get("SPLogin", None), danovy_data.get("SPLoginQRCode", None), danovy_data.get("SPpassQRCode", None), danovy_data.get("SPICZ", None), danovy_data.get("SPQRCode", None), danovy_data.get("UnionPIN", None), dph_data.get("companyNameFromFinancnaSprava", None), dph_data.get("MaObcianskyPreukaz", None) ,danovy_data.get("VSZPVAR", None), processed_grid_card_data
+
+
