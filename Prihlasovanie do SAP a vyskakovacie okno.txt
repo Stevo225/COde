@@ -1,0 +1,43 @@
+import win32com.client
+import subprocess
+import time
+import pyautogui
+from pywinauto import Application
+
+# Run SAP Logon
+subprocess.run(r'C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe')
+
+time.sleep(5)
+print("aaaaaaaaaaaaaaaaaaa")
+sapGui = win32com.client.GetObject("SAPGUI")
+application = sapGui.GetScriptingEngine
+
+#Pripojenie na SAp
+connection = application.OpenConnection("SAPEX Production", True)
+time.sleep(7)
+connection = application.Children(0)
+session = connection.Children(0)
+# Zvacsenie okna
+#session.findById("wnd[0]").maximize()
+
+time.sleep(5)
+# Cesta k aplikácii
+app_path = r'C:\Program Files (x86)\SAP\FrontEnd\SAPgui\saplogon.exe'
+
+# Spustenie aplikácie
+app = Application(backend="uia").connect(path=app_path)
+
+# Pauza na načítanie aplikácie
+time.sleep(10)
+
+# Získanie hlavného okna s názvom "Zoznam firiem"
+hlavne_okno = app.window(title="Licenčná informácia pri viacnásobnom prihlásení")
+
+if hlavne_okno:
+    pyautogui.press('tab')
+    pyautogui.press('up')
+    time.sleep(4)
+    print("kliko sioku hore")
+    tlacidlo = hlavne_okno.child_window(control_type="Pane", found_index=0).child_window(control_type="Button", found_index=1)
+    tlacidlo.click()
+
