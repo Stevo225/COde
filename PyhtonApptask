@@ -6,10 +6,10 @@ import os
 #webdriver_path = r'C:\Users\sgajdos1\Documents\chromedriver-win32\chromedriver.exe'
 
 filepath = os.path.dirname(__file__)+'\\'
-webdriver_path = os.path.dirname(os.path.dirname(__file__))+r'\chromedriver.exe'
+#webdriver_path = os.path.dirname(os.path.dirname(__file__))+r'\chromedriver.exe'
 
 #url = r'http://apptask/tasks'
-url = 'https://www.google.com/'
+#url = 'https://www.google.com/'
 
 def get_logger(
         LOG_FORMAT     = '%(asctime)s : %(levelname)s : %(name)s : %(message)s',
@@ -91,21 +91,21 @@ def end_task():
 
     try:
         cislo_dlznika = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[1]/elements-gateway/div/div[2]/dx-text-box/div/div[1]/input')
-        cislo_dlznika_text = cislo_dlznika.text
+        cislo_dlznika_text = cislo_dlznika.get_attribute('value')
     except:
         logging.exception('cislo_dlznika - XPATH sa nenasiel')
         raise SystemExit(0)
 
     try:
         cislo_prislubu = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[2]/elements-gateway/div/div[2]/dx-text-box/div/div[1]/input')
-        cislo_prislubu_text = cislo_prislubu.text
+        cislo_prislubu_text = cislo_prislubu.get_attribute('value')
     except:
         logging.exception('cislo_prislubu - XPATH sa nenasiel')
         raise SystemExit(0)
 
     try:
         valuta_realizacie = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[3]/elements-gateway/div/div[2]/dx-date-box/div/div/div[1]/input')
-        valuta_realizacie_text = valuta_realizacie.text
+        valuta_realizacie_text = valuta_realizacie.get_attribute('value')
     except:
         logging.exception('valuta_realizacie - XPATH sa nenasiel')
         raise SystemExit(0)
@@ -150,14 +150,14 @@ def end_task():
 
     try:
         zmena_konecnej_splatnosti = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[2]/div/div/div/div[3]/elements-gateway/div/div[2]/dx-date-box/div/div/div[1]/input')
-        zmena_konecnej_splatnosti_text = zmena_konecnej_splatnosti.text
+        zmena_konecnej_splatnosti_text = zmena_konecnej_splatnosti.get_attribute('value')
     except:
         logging.exception('zmena_konečnej_splatnosti - XPATH sa nenasiel')
         raise SystemExit(0)
 
     try:
         datum_realizacie = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[3]/elements-gateway/div/elem-datum-realizacie/div[2]/div[2]/dx-date-box/div/div/div[1]/input')
-        datum_realizacie_text = datum_realizacie.text
+        datum_realizacie_text = datum_realizacie.get_attribute('value')
     except:
         logging.exception('datum_realizácie - XPATH sa nenasiel')
         raise SystemExit(0)
@@ -170,6 +170,13 @@ def end_task():
         file.write(f"{valuta_realizacie_text}\n")
         file.write(f"{zmena_konecnej_splatnosti_text}\n")
         file.write(f"{datum_realizacie_text}\n")
+        file.write(f"{znizenie}\n")
+        file.write(f"{zvysenie}\n")
+        file.write(f"{zmena_platnosti}\n")
+        file.write(f"{ina_zmena}\n")
+
+
+
 
 if __name__ == '__main__':
     end_task()
