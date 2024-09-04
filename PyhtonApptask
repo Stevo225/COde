@@ -1,0 +1,176 @@
+import re
+import logging
+import os
+
+#filepath = r'C:\Users\sgajdos1\Documents\Code folder\\'
+#webdriver_path = r'C:\Users\sgajdos1\Documents\chromedriver-win32\chromedriver.exe'
+
+filepath = os.path.dirname(__file__)+'\\'
+webdriver_path = os.path.dirname(os.path.dirname(__file__))+r'\chromedriver.exe'
+
+#url = r'http://apptask/tasks'
+url = 'https://www.google.com/'
+
+def get_logger(
+        LOG_FORMAT     = '%(asctime)s : %(levelname)s : %(name)s : %(message)s',
+        LOG_NAME       = '',
+        LOG_FILE_INFO  = filepath+'debug_log.txt',
+        LOG_FILE_ERROR = filepath+'exception_log.txt'):
+    log           = logging.getLogger(LOG_NAME)
+    log_formatter = logging.Formatter(LOG_FORMAT)
+    file_handler_debug = logging.FileHandler(LOG_FILE_INFO)
+    file_handler_debug.setFormatter(log_formatter)
+    file_handler_debug.setLevel(logging.INFO)
+    log.addHandler(file_handler_debug)
+    file_handler_error = logging.FileHandler(LOG_FILE_ERROR)
+    file_handler_error.setFormatter(log_formatter)
+    file_handler_error.setLevel(logging.ERROR)
+    log.addHandler(file_handler_error)
+    log.setLevel(logging.INFO)
+    return log
+
+logger = get_logger()
+try:
+    from selenium import webdriver
+    import time
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    import re
+except:
+    logger.exception('importing libraries failed')
+    raise SystemExit(0)
+
+try:
+    file = open(filepath + r'input_file.txt', 'r')
+    input_file = file.readlines()
+    file.close()
+    note = re.search('{note}=(.*)', input_file[0]).group(1)
+except:
+    logger.exception('cannot read input file')
+
+try:
+    file = open(filepath + r'session_info.txt', 'r')
+    session_info = file.readlines()
+    file.close()
+    logger.info('session_info precitane')
+    file = open(filepath + r"debug_log.txt", "r+")
+    file.truncate(0)
+    file.close()
+    logger.info('debug_log premazany')
+    file = open(filepath + r"exception_log.txt", "r+")
+    file.truncate(0)
+    file.close()
+    logger.info('exception_log premazany')
+except:
+    logger.exception('session or log file set up failed')
+    raise SystemExit(0)
+
+def create_driver_session(session_id, executor_url):
+    from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
+    # Save the original function, so we can revert our patch
+    org_command_execute = RemoteWebDriver.execute
+    def new_command_execute(self, command, params=None):
+        if command == 'newSession':
+            # Mock the response
+            return {'success': 0, 'value': None, 'sessionId': session_id}
+        else:
+            return org_command_execute(self, command, params)
+    # Patch the function before creating the driver object
+    RemoteWebDriver.execute = new_command_execute
+    new_driver = webdriver.Remote(command_executor=executor_url, desired_capabilities={})
+    new_driver.session_id = session_id
+    # Replace the patched function with original function
+    RemoteWebDriver.execute = org_command_execute
+    return new_driver
+
+driver = create_driver_session(session_info[0].replace('\n',''), session_info[1].replace('\n',''))
+logger.info('driver set: '+str(driver))
+
+def end_task():
+
+    try:
+        cislo_dlznika = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[1]/elements-gateway/div/div[2]/dx-text-box/div/div[1]/input')
+        cislo_dlznika_text = cislo_dlznika.text
+    except:
+        logging.exception('cislo_dlznika - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        cislo_prislubu = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[2]/elements-gateway/div/div[2]/dx-text-box/div/div[1]/input')
+        cislo_prislubu_text = cislo_prislubu.text
+    except:
+        logging.exception('cislo_prislubu - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        valuta_realizacie = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[1]/div/div/div/div[3]/elements-gateway/div/div[2]/dx-date-box/div/div/div[1]/input')
+        valuta_realizacie_text = valuta_realizacie.text
+    except:
+        logging.exception('valuta_realizacie - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[2]/elements-gateway/div/content-iterator/div/div[1]/div[1]/div//dx-check-box[@aria-checked="true"]')
+        znizenie = "True"
+    except:
+        znizenie = "False"
+
+    try:
+        driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[2]/elements-gateway/div/content-iterator/div/div[1]/div[2]/div//dx-check-box[@aria-checked="true"]')
+        zvysenie = "True"
+    except:
+        zvysenie = "False"
+
+    try:
+        driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[2]/elements-gateway/div/content-iterator/div/div[1]/div[3]/div//dx-check-box[@aria-checked="true"]')
+        zmena_platnosti = "True"
+    except:
+        zmena_platnosti = "False"
+
+    try:
+        driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[2]/elements-gateway/div/content-iterator/div/div[1]/div[4]/div//dx-check-box[@aria-checked="true"]')
+        ina_zmena = "True"
+    except:
+        ina_zmena = "False"
+
+    try:
+        cislo_zvysenia = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[2]/div/div/div/div[1]/elements-gateway/div/div[2]/div/div')
+        cislo_zvysenia_text = cislo_zvysenia.text
+    except:
+        logging.exception('cislo_zvysenia - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        suma_po_zvyseni = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[2]/div/div/div/div[2]/elements-gateway/div/div[2]/div/div')
+        suma_po_zvyseni_text = suma_po_zvyseni.text
+    except:
+        logging.exception('suma_po_zvyseni - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        zmena_konecnej_splatnosti = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/section-dynamic-form[2]/div/div/div/div[3]/elements-gateway/div/div[2]/dx-date-box/div/div/div[1]/input')
+        zmena_konecnej_splatnosti_text = zmena_konecnej_splatnosti.text
+    except:
+        logging.exception('zmena_konečnej_splatnosti - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    try:
+        datum_realizacie = driver.find_element_by_xpath('//*[@id="content"]/uloha-detail-content/form/div/dynamic-ui2/div/dynamic-form-renderer/div/section-dynamic-form[2]/div/div[2]/div/div[3]/elements-gateway/div/elem-datum-realizacie/div[2]/div[2]/dx-date-box/div/div/div[1]/input')
+        datum_realizacie_text = datum_realizacie.text
+    except:
+        logging.exception('datum_realizácie - XPATH sa nenasiel')
+        raise SystemExit(0)
+
+    with open('AppTask_Data.txt', 'w') as file:
+        file.write(f"{cislo_dlznika_text}\n")
+        file.write(f"{cislo_prislubu_text}\n")
+        file.write(f"{cislo_zvysenia_text}\n")
+        file.write(f"{suma_po_zvyseni_text}\n")
+        file.write(f"{valuta_realizacie_text}\n")
+        file.write(f"{zmena_konecnej_splatnosti_text}\n")
+        file.write(f"{datum_realizacie_text}\n")
+
+if __name__ == '__main__':
+    end_task()
+
